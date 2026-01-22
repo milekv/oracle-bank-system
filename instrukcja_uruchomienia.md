@@ -68,6 +68,7 @@ odsetki dla kredytów
 historię salda
 raport top klientów
 
+
 Sprawdzenie statusu jobów:
 
     SELECT JOB_NAME, ENABLED, STATE FROM USER_SCHEDULER_JOBS;
