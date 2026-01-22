@@ -69,15 +69,15 @@ Projekt pokazuje praktyczne rozwiązania w zakresie:
 ## 🚀 Status projektu
 
 Projekt w trakcie realizacji.  
-Kolejne etapy:
+Etapy:
 
 - [x] struktura katalogów  
 - [x] dokumentacja  
-- [ ] model ERD  
-- [ ] tabele  
-- [ ] indeksy  
-- [ ] partycjonowanie  
-- [ ] PL/SQL  
-- [ ] bezpieczeństwo  
-- [ ] wydajność  
-- [ ] backup i recovery
+- [x] model ERD  
+- [x] tabele  
+- [x] indeksy  
+- [x] partycjonowanie  
+- [x] PL/SQL  
+- [x] bezpieczeństwo  
+- [x] wydajność  
+- [x] backup i recovery
