@@ -41,23 +41,7 @@ Projekt podzielony jest na logiczne obszary:
 
 ## 📁 Struktura projektu
 
-oracle-bank-system
-│
-├── 01_architektura
-├── 02_model_erd
-├── 03_tabele
-├── 04_indeksy
-├── 05_partycjonowanie
-├── 06_plsql
-│   ├── pakiety
-│   ├── procedury
-│   └── funkcje
-├── 07_triggery
-├── 08_bezpieczenstwo
-├── 09_joby
-├── 10_wydajnosc
-├── 11_backup
-└── README.md
+![ERD OraBank](02_model_erd/erd_orabank.png)
 
 
 ## 🧰 Technologie
