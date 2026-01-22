@@ -75,10 +75,10 @@ CREATE OR REPLACE PACKAGE BODY ORABANK_ACCOUNT_PKG IS
         INSERT INTO TRANSACTION (ACCOUNT_ID, TRANSACTION_DATE, AMOUNT, TRANSACTION_TYPE, DESCRIPTION, BALANCE_AFTER)
         VALUES (p_to_account_id, SYSDATE, p_amount, 'TRANSFER', p_description, GET_ACCOUNT_BALANCE(p_to_account_id));
 
-        -- Opcjonalnie dodanie do tabeli TRANSFER
+        -- Dodanie do tabeli TRANSFER
         INSERT INTO TRANSFER (TRANSACTION_ID, TARGET_ACCOUNT, TITLE)
         VALUES (
-            TRANSACTION_SEQ.CURRVAL, -- jeśli używasz sekwencji zamiast IDENTITY
+            TRANSACTION_SEQ.CURRVAL, 
             (SELECT ACCOUNT_NUMBER FROM ACCOUNT WHERE ACCOUNT_ID = p_to_account_id),
             p_description
         );
