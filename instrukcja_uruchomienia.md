@@ -31,7 +31,7 @@ Uruchom wszystkie tabele:
     @04_indeksy/orabank_indexes.sql
     @05_partycjonowanie/orabank_partitioning.sql
 
-## 4️⃣ Wgranie PL/SQL (pakiety, procedury, funkcje)
+## 3️⃣ Wgranie PL/SQL (pakiety, procedury, funkcje)
     @06_plsql/pakiety/orabank_account_pkg.sql
     @06_plsql/procedury/orabank_loan_proc.sql
     @06_plsql/funkcje/orabank_account_func.sql
@@ -39,13 +39,13 @@ Uruchom wszystkie tabele:
 
 Teraz możesz wywoływać procedury i funkcje, np. przelewy lub obliczanie odsetek.
 
-## 5️⃣ Triggery i audyt
+## 4️⃣ Triggery i audyt
     @07_triggery/orabank_triggers.sql
 
 
 Automatyczne logowanie zmian w tabelach do AUDIT_LOG.
 
-## 6️⃣ Role i bezpieczeństwo
+## 5️⃣ Role i bezpieczeństwo
     @08_bezpieczenstwo/orabank_security.sql
 
 
@@ -58,7 +58,7 @@ Możesz teraz testować logowanie jako różni użytkownicy:
     CONNECT teller_user/teller123
     SELECT * FROM ACCOUNT;
 
-## 7️⃣ Joby (zadania cykliczne)
+## 6️⃣ Joby (zadania cykliczne)
     @09_joby/orabank_jobs.sql
 
 
@@ -73,7 +73,7 @@ Sprawdzenie statusu jobów:
 
     SELECT JOB_NAME, ENABLED, STATE FROM USER_SCHEDULER_JOBS;
 
-## 8️⃣ Optymalizacja wydajności
+## 7️⃣ Optymalizacja wydajności
     @10_wydajnosc/orabank_performance.sql
 
 
@@ -81,13 +81,14 @@ Indeksy złożone
 Materialized views
 Statystyki dla optymalizatora Oracle
 
-## 9️⃣ Backup i przywracanie
+## 8️⃣ Backup i przywracanie
     @11_backup/orabank_backup.sql
 
 
 Backup: Data Pump (EXPDP) lub RMAN
 
 Restore: Data Pump Import (IMPDP)
+
 
 🔹 Testowanie systemu
 
