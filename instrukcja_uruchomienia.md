@@ -18,9 +18,10 @@ Zawiera wszystkie elementy projektu: tabele, PL/SQL, joby, bezpieczeństwo, wyda
 1. Zaloguj się jako administrator (np. SYSDBA).  
 2. Wykonaj:
 
-sql:
-CREATE USER ORABANK IDENTIFIED BY ora123;
-GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE PROCEDURE, CREATE TRIGGER, CREATE JOB TO ORABANK;
+sql: 
+
+    CREATE USER ORABANK IDENTIFIED BY ora123;
+    GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE PROCEDURE, CREATE TRIGGER, CREATE JOB TO ORABANK;
 
 W SQL*Plus lub SQL Developer zaloguj się jako ORABANK.
 
@@ -39,13 +40,13 @@ Uruchom wszystkie tabele:
 Teraz możesz wywoływać procedury i funkcje, np. przelewy lub obliczanie odsetek.
 
 ## 5️⃣ Triggery i audyt
-@07_triggery/orabank_triggers.sql
+    @07_triggery/orabank_triggers.sql
 
 
 Automatyczne logowanie zmian w tabelach do AUDIT_LOG.
 
 ## 6️⃣ Role i bezpieczeństwo
-@08_bezpieczenstwo/orabank_security.sql
+    @08_bezpieczenstwo/orabank_security.sql
 
 
 Tworzy role: BANK_ADMIN, BANK_TELLER, BANK_AUDITOR
@@ -54,37 +55,33 @@ Przypisuje uprawnienia i widoki raportowe
 
 Możesz teraz testować logowanie jako różni użytkownicy:
 
-CONNECT teller_user/teller123
-SELECT * FROM ACCOUNT;
+    CONNECT teller_user/teller123
+    SELECT * FROM ACCOUNT;
 
 ## 7️⃣ Joby (zadania cykliczne)
-@09_joby/orabank_jobs.sql
+    @09_joby/orabank_jobs.sql
 
 
 Oracle Scheduler automatycznie uruchamia codziennie:
 
 odsetki dla kredytów
-
 historię salda
-
 raport top klientów
 
 Sprawdzenie statusu jobów:
 
-SELECT JOB_NAME, ENABLED, STATE FROM USER_SCHEDULER_JOBS;
+    SELECT JOB_NAME, ENABLED, STATE FROM USER_SCHEDULER_JOBS;
 
 ## 8️⃣ Optymalizacja wydajności
-@10_wydajnosc/orabank_performance.sql
+    @10_wydajnosc/orabank_performance.sql
 
 
 Indeksy złożone
-
 Materialized views
-
 Statystyki dla optymalizatora Oracle
 
 ## 9️⃣ Backup i przywracanie
-@11_backup/orabank_backup.sql
+    @11_backup/orabank_backup.sql
 
 
 Backup: Data Pump (EXPDP) lub RMAN
@@ -96,22 +93,26 @@ Restore: Data Pump Import (IMPDP)
 Przykładowe operacje:
 
 -- Dodanie klienta
-INSERT INTO CLIENT (CLIENT_ID, NAME, SURNAME, PESEL, EMAIL) VALUES (1, 'Jan', 'Kowalski', '12345678901', 'jan.kowalski@example.com');
+
+    INSERT INTO CLIENT (CLIENT_ID, NAME, SURNAME, PESEL, EMAIL) VALUES (1, 'Jan', 'Kowalski', '12345678901', 'jan.kowalski@example.com');
 
 -- Dodanie konta
-INSERT INTO ACCOUNT (ACCOUNT_ID, CLIENT_ID, ACCOUNT_NUMBER, BALANCE, CREATED_DATE, STATUS)
-VALUES (1, 1, '1234567890123456', 1000, SYSDATE, 'AKTYWNE');
+
+    INSERT INTO ACCOUNT (ACCOUNT_ID, CLIENT_ID, ACCOUNT_NUMBER, BALANCE, CREATED_DATE, STATUS)
+    VALUES (1, 1, '1234567890123456', 1000, SYSDATE, 'AKTYWNE');
 
 -- Wykonanie przelewu
-BEGIN
+
+    BEGIN
     ORABANK_ACCOUNT_PKG.MAKE_TRANSFER(1, 2, 200, 'Test przelewu');
-END;
-/
+    END;
+    /
 
 -- Pobranie historii transakcji
-DECLARE
+
+    DECLARE
     v_cursor SYS_REFCURSOR;
-BEGIN
+    BEGIN
     v_cursor := GET_ACCOUNT_TRANSACTIONS(1);
-END;
-/
+    END;
+    /
