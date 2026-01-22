@@ -1,4 +1,4 @@
-# 🏦 OraBank 
+# 🏦 Baza danych OraBank 
 
 Projekt przedstawiający system bankowy,
 zaprojektowany tak, jak w rzeczywistych systemach bazodanowych.
