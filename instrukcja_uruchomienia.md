@@ -1,6 +1,6 @@
 # 🏦 Instrukcja uruchomienia projektu OraBank
 
-Ten plik pokazuje krok po kroku, jak uruchomić kompletny system bankowy **OraBank** w Oracle Database.  
+Ten plik pokazuje krok po kroku, jak uruchomić system bankowy **OraBank** w Oracle Database.  
 Zawiera wszystkie elementy projektu: tabele, PL/SQL, joby, bezpieczeństwo, wydajność i backup.
 
 ---
@@ -26,14 +26,14 @@ W SQL*Plus lub SQL Developer zaloguj się jako ORABANK.
 
 Uruchom wszystkie tabele:
 
-@03_tabele/orabank_tables.sql
-@04_indeksy/orabank_indexes.sql
-@05_partycjonowanie/orabank_partitioning.sql
+    @03_tabele/orabank_tables.sql
+    @04_indeksy/orabank_indexes.sql
+    @05_partycjonowanie/orabank_partitioning.sql
 
 ## 4️⃣ Wgranie PL/SQL (pakiety, procedury, funkcje)
-@06_plsql/pakiety/orabank_account_pkg.sql
-@06_plsql/procedury/orabank_loan_proc.sql
-@06_plsql/funkcje/orabank_account_func.sql
+    @06_plsql/pakiety/orabank_account_pkg.sql
+    @06_plsql/procedury/orabank_loan_proc.sql
+    @06_plsql/funkcje/orabank_account_func.sql
 
 
 Teraz możesz wywoływać procedury i funkcje, np. przelewy lub obliczanie odsetek.
