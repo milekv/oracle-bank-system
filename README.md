@@ -1,4 +1,4 @@
-# 🏦 Oracle Bank System
+# 🏦 OraBank 
 
 Projekt przedstawiający system bankowy,
 zaprojektowany tak, jak w rzeczywistych systemach bazodanowych.
