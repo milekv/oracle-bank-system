@@ -40,8 +40,9 @@ Projekt podzielony jest na logiczne obszary:
 - **BANK_REP** – raportowanie  
 
 ## 📁 Struktura projektu
+- [Diagram ERD – część 1](02_model_erd/1.png)
+- [Diagram ERD – część 2](02_model_erd/2.png)
 
-![ERD OraBank]https://drive.google.com/file/d/1G42Nio4eVg-0lC-IocDYyNMvPkr8_Y3c/view?usp=sharing)
 
 
 ## 🧰 Technologie
