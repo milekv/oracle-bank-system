@@ -39,9 +39,14 @@ Projekt podzielony jest na logiczne obszary:
 - **BANK_ADMIN** – administracja i audyt  
 - **BANK_REP** – raportowanie  
 
-## 📁 Struktura projektu
-- [Diagram ERD – część 1](02_model_erd/1.png)
-- [Diagram ERD – część 2](02_model_erd/2.png)
+## 📊 Diagram ERD
+
+### ERD – część 1
+![ERD 1](./02_model_erd/1.png)
+
+### ERD – część 2
+![ERD 2](./02_model_erd/2.png)
+
 
 
 
