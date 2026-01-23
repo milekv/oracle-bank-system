@@ -41,7 +41,7 @@ Projekt podzielony jest na logiczne obszary:
 
 ## 📁 Struktura projektu
 
-![ERD OraBank](02_model_erd/orabank_erd.png)
+![ERD OraBank]https://drive.google.com/file/d/1G42Nio4eVg-0lC-IocDYyNMvPkr8_Y3c/view?usp=sharing)
 
 
 ## 🧰 Technologie
