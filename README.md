@@ -1,7 +1,6 @@
 # 🏦 Baza danych OraBank 
 
-Projekt przedstawiający system bankowy,
-zaprojektowany tak, jak w rzeczywistych systemach bazodanowych.
+Projekt przedstawiający bazę danych w systemach bankowych.
 
 Celem projektu jest odwzorowanie architektury i procesów stosowanych w dużych bankach.
 
