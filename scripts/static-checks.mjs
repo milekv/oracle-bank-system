@@ -35,7 +35,7 @@ const forbiddenPatterns = [
   [/TRANSACTION_SEQ/i, "sequence incompatible with identity columns"],
   [/\b(?:FROM|INTO|ON|REFERENCES)\s+TRANSACTION\b/i, "legacy TRANSACTION table reference"],
   [/UPDATE_ACCOUNT_BALANCE\s*:=/i, "invalid PL/SQL assignment"],
-  [/[–—]/, "long dash character"],
+  [/[\u2013\u2014]/, "long dash character"],
 ];
 
 for (const path of textFiles) {
