@@ -1,86 +1,96 @@
-# 🏦 Baza danych OraBank 
+# OraBank - Oracle database system
 
-Projekt przedstawiający bazę danych w systemach bankowych.
+An Oracle SQL and PL/SQL reference project for accounts, transfers, loans, auditing, access roles, Scheduler jobs, reporting, and recovery planning.
 
-Celem projektu jest odwzorowanie architektury i procesów stosowanych w dużych bankach.
+[Polska instrukcja](instrukcja_uruchomienia.md)
 
-## 🎯 Cel projektu
+[![SQL checks](https://github.com/milekv/oracle-bank-system/actions/workflows/ci.yml/badge.svg)](https://github.com/milekv/oracle-bank-system/actions/workflows/ci.yml)
+![Oracle](https://img.shields.io/badge/Oracle-19c%20%7C%2021c-f80000)
+![PLSQL](https://img.shields.io/badge/PL%2FSQL-packages%20and%20jobs-2f6f9f)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-Projekt umożliwia:
+![OraBank ERD](02_model_erd/erd_orabank.png)
 
-- praktyczne wykorzystanie SQL i PL/SQL w realistycznym systemie bankowym  
-- poznanie zaawansowanych mechanizmów baz danych Oracle  
-- ćwiczenie projektowania modeli danych i relacji  
-- sprawdzenie wydajności, bezpieczeństwa i audytu danych  
+OraBank focuses on database behavior rather than a mock banking interface. The central transfer package validates inputs, locks both accounts in a deterministic order, updates balances, writes balance history, stores the transaction pair, and leaves the final commit decision to the caller.
 
-## 🧠 Zakres systemu
+## Included modules
 
-System bankowy obejmuje m.in.:
+- Relational model for clients, accounts, cards, transfers, loans, and audit data.
+- Indexes for foreign keys and common account and transaction paths.
+- `ORABANK_ACCOUNT_PKG` with balance and transfer operations.
+- Loan creation and installment payment procedures.
+- Account history and loan interest functions.
+- Balance audit trigger.
+- Oracle Scheduler jobs for balance snapshots and expired loans.
+- Least-privilege admin, teller, and auditor roles.
+- Reporting views and an optional materialized view.
+- Optional interval partitioning examples.
+- Data Pump recovery runbook.
+- SQL*Plus object validation and a transactional smoke test.
 
-- klientów banku  
-- rachunki bankowe  
-- waluty  
-- karty płatnicze  
-- transakcje i przelewy  
-- historię salda  
-- kredyty i raty  
-- audyt operacji  
-- zadania cykliczne (joby)  
+## Transfer behavior
 
-## 🧱 Architektura bazy danych
+`MAKE_TRANSFER` performs these steps in one caller-controlled transaction:
 
-Projekt podzielony jest na logiczne obszary:
+1. Rejects non-positive amounts and transfers to the same account.
+2. Locks both active accounts in account ID order.
+3. Verifies the sender balance.
+4. Updates both balances and writes balance history.
+5. Creates outgoing and incoming `BANK_TRANSACTION` rows.
+6. Links the outgoing row to `TRANSFER`.
+7. Rolls back to its savepoint on failure.
 
-### Schematy:
+The package intentionally does not issue `COMMIT`.
 
-- **BANK_CORE** – dane podstawowe (klienci, konta, karty)  
-- **BANK_TX** – dane transakcyjne (duże wolumeny)  
-- **BANK_ADMIN** – administracja i audyt  
-- **BANK_REP** – raportowanie  
+## Install
 
-## 📊 Diagram ERD
+Oracle Database 19c or 21c and SQL*Plus are required. Create an empty development schema without storing its password in scripts, connect as that schema, then run:
 
-![ERD 1](./02_model_erd/1.png)
+```sql
+@install.sql
+@tests/smoke_test.sql
+```
 
-![ERD 2](./02_model_erd/2.png)
+Optional modules:
 
+```sql
+@10_wydajnosc/orabank_performance.sql
+@05_partycjonowanie/orabank_partitioning.sql
+```
 
+Role and user creation requires an administrative connection:
 
+```sql
+@08_bezpieczenstwo/orabank_security.sql
+```
 
-## 🧰 Technologie
+That script prompts for passwords with hidden input and expires them on first login.
 
-- Oracle Database 19c / 21c  
-- SQL  
-- PL/SQL  
-- Oracle Partitioning  
-- Oracle Scheduler  
-- RMAN  
+## Verification
 
-## 🔐 Zakres zastosowania
+`install.sql` fails on SQL errors and runs `tests/validate_objects.sql`. The smoke test creates isolated sample records, executes a transfer, checks balances and transaction counts, and rolls all test data back.
 
-Projekt pokazuje praktyczne rozwiązania w zakresie:
+The GitHub workflow also runs repository checks for missing installation files, accidental example passwords, stale table names, and known invalid PL/SQL patterns.
 
-- projektowania modeli danych i relacji  
-- tworzenia tabel i indeksów  
-- partycjonowania dużych zbiorów danych  
-- programowania w PL/SQL  
-- bezpieczeństwa i ról  
-- audytu operacji  
-- optymalizacji zapytań  
-- strategii backupu i przywracania  
+## Repository map
 
-## 🚀 Status projektu
+```text
+03_tabele              core relational model
+04_indeksy             supporting indexes
+05_partycjonowanie     optional interval partitioning lab
+06_plsql               packages, procedures, and functions
+07_triggery             audit trigger
+08_bezpieczenstwo      roles, reporting views, and users
+09_joby                Oracle Scheduler jobs
+10_wydajnosc           optional reporting and statistics
+11_backup              Data Pump recovery runbook
+tests                   object validation and smoke test
+```
 
-Projekt w trakcie realizacji.  
-Etapy:
+## Scope
 
-- [x] struktura katalogów  
-- [x] dokumentacja  
-- [x] model ERD  
-- [x] tabele  
-- [x] indeksy  
-- [x] partycjonowanie  
-- [x] PL/SQL  
-- [x] bezpieczeństwo  
-- [x] wydajność  
-- [x] backup i recovery
+This is an educational database engineering project, not production banking software. Real deployment would additionally require encryption and key management, stronger identity controls, regulatory audit retention, reconciliation, idempotency keys, fraud controls, monitoring, disaster recovery exercises, and formal security review.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

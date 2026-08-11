@@ -1,18 +1,16 @@
--- Plik: orabank_backup.sql
--- Cel: Backup i przywracanie bazy OraBank
+-- Backupu nie uruchamia się jako blok PL/SQL w schemacie aplikacji.
+-- Poniższe polecenia są szablonami dla administratora bazy.
+-- Dane logowania podawaj interaktywnie lub przez bezpieczny portfel Oracle.
 
--- 1️⃣ Procedura eksportu danych (Data Pump)
--- (uruchamiane w SQL*Plus lub RMAN)
-BEGIN
-    DBMS_DATAPUMP.OPEN('EXPORT','SCHEMA','ORABANK');
-    DBMS_OUTPUT.PUT_LINE('Backup schematu OraBank został rozpoczęty');
-END;
-/
+-- Data Pump export:
+-- expdp orabank@service schemas=ORABANK directory=DATA_PUMP_DIR dumpfile=orabank_%U.dmp logfile=orabank_export.log parallel=2
 
--- 2️⃣ Procedura importu danych (przywracanie)
--- (uruchamiane w SQL*Plus lub RMAN)
-BEGIN
-    DBMS_DATAPUMP.OPEN('IMPORT','SCHEMA','ORABANK');
-    DBMS_OUTPUT.PUT_LINE('Przywracanie schematu OraBank zostało rozpoczęte');
-END;
-/
+-- Data Pump import do pustego schematu testowego:
+-- impdp system@service directory=DATA_PUMP_DIR dumpfile=orabank_%U.dmp logfile=orabank_import.log remap_schema=ORABANK:ORABANK_TEST
+
+-- Przed odtworzeniem wykonaj próbę na odizolowanym środowisku i sprawdź:
+-- 1. liczbę obiektów oraz obiekty INVALID,
+-- 2. spójność kluczy obcych,
+-- 3. pakiety i procedury,
+-- 4. kontrolowany test przelewu,
+-- 5. politykę retencji i szyfrowania plików dump.

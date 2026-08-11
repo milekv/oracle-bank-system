@@ -1,120 +1,92 @@
-# 🏦 Instrukcja uruchomienia projektu OraBank
+# OraBank - instrukcja uruchomienia
 
-Ten plik pokazuje krok po kroku, jak uruchomić system bankowy **OraBank** w Oracle Database.  
-Zawiera wszystkie elementy projektu: tabele, PL/SQL, joby, bezpieczeństwo, wydajność i backup.
+[English README](README.md)
 
----
+## Wymagania
 
-## 1️⃣ Wymagania
+- Oracle Database 19c lub 21c.
+- SQL*Plus albo SQLcl.
+- Pusty schemat developerski `ORABANK`.
+- Dla jobów uprawnienie `CREATE JOB`.
+- Dla opcjonalnego materialized view uprawnienie `CREATE MATERIALIZED VIEW`.
 
-- Oracle Database 19c lub 21c (lokalnie, VM lub Docker)  
-- SQL*Plus, SQL Developer lub inny klient Oracle  
-- Uprawnienia do tworzenia schematów i użytkowników  
+Nie zapisuj hasła w repozytorium ani w historii powłoki. Użyj interaktywnego logowania lub Oracle Wallet.
 
----
+## Instalacja podstawowa
 
-## 2️⃣ Utworzenie schematu (użytkownika ORABANK)
+Połącz się jako właściciel pustego schematu i uruchom:
 
-1. Zaloguj się jako administrator (np. SYSDBA).  
-2. Wykonaj:
+```sql
+@install.sql
+```
 
-sql: 
+Skrypt instaluje kolejno tabele, indeksy, pakiet rachunków, procedury kredytowe, funkcje, trigger audytowy oraz joby. Na końcu sprawdza obiekty `INVALID`. Pierwszy błąd SQL zatrzymuje instalację.
 
-    CREATE USER ORABANK IDENTIFIED BY ora123;
-    GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE PROCEDURE, CREATE TRIGGER, CREATE JOB TO ORABANK;
+## Test dymny
 
-W SQL*Plus lub SQL Developer zaloguj się jako ORABANK.
+```sql
+@tests/smoke_test.sql
+```
 
-Uruchom wszystkie tabele:
+Test:
 
-    @03_tabele/orabank_tables.sql
-    @04_indeksy/orabank_indexes.sql
-    @05_partycjonowanie/orabank_partitioning.sql
+- tworzy dwóch klientów i dwa rachunki,
+- wykonuje przelew 250 jednostek,
+- sprawdza oba salda,
+- sprawdza dwa wpisy w `BANK_TRANSACTION`,
+- wycofuje wszystkie dane testowe.
 
-## 3️⃣ Wgranie PL/SQL (pakiety, procedury, funkcje)
-    @06_plsql/pakiety/orabank_account_pkg.sql
-    @06_plsql/procedury/orabank_loan_proc.sql
-    @06_plsql/funkcje/orabank_account_func.sql
+## Bezpieczeństwo
 
+Tworzenie ról i użytkowników wymaga połączenia administracyjnego:
 
-Teraz możesz wywoływać procedury i funkcje, np. przelewy lub obliczanie odsetek.
+```sql
+@08_bezpieczenstwo/orabank_security.sql
+```
 
-## 4️⃣ Triggery i audyt
-    @07_triggery/orabank_triggers.sql
+Skrypt prosi o trzy hasła przez ukryty prompt. Nie zawiera haseł domyślnych. Nowe konta muszą zmienić hasło przy pierwszym logowaniu.
 
+## Moduły opcjonalne
 
-Automatyczne logowanie zmian w tabelach do AUDIT_LOG.
+Obiekty raportowe i statystyki:
 
-## 5️⃣ Role i bezpieczeństwo
-    @08_bezpieczenstwo/orabank_security.sql
+```sql
+@10_wydajnosc/orabank_performance.sql
+```
 
+Przykład interval partitioning tworzy osobne tabele laboratoryjne i nie migruje danych podstawowych:
 
-Tworzy role: BANK_ADMIN, BANK_TELLER, BANK_AUDITOR
+```sql
+@05_partycjonowanie/orabank_partitioning.sql
+```
 
-Przypisuje uprawnienia i widoki raportowe
+## Sprawdzenie stanu
 
-Możesz teraz testować logowanie jako różni użytkownicy:
+Obiekty PL/SQL:
 
-    CONNECT teller_user/teller123
-    SELECT * FROM ACCOUNT;
+```sql
+SELECT object_type, object_name, status
+FROM user_objects
+WHERE object_type IN ('PACKAGE', 'PACKAGE BODY', 'PROCEDURE', 'FUNCTION', 'TRIGGER')
+ORDER BY object_type, object_name;
+```
 
-## 6️⃣ Joby (zadania cykliczne)
-    @09_joby/orabank_jobs.sql
+Joby:
 
+```sql
+SELECT job_name, enabled, state, last_start_date, next_run_date
+FROM user_scheduler_jobs
+ORDER BY job_name;
+```
 
-Oracle Scheduler automatycznie uruchamia codziennie:
+Błędy kompilacji:
 
-odsetki dla kredytów
-historię salda
-raport top klientów
+```sql
+SELECT name, type, line, position, text
+FROM user_errors
+ORDER BY name, sequence;
+```
 
+## Backup i odtwarzanie
 
-Sprawdzenie statusu jobów:
-
-    SELECT JOB_NAME, ENABLED, STATE FROM USER_SCHEDULER_JOBS;
-
-## 7️⃣ Optymalizacja wydajności
-    @10_wydajnosc/orabank_performance.sql
-
-
-Indeksy złożone
-Materialized views
-Statystyki dla optymalizatora Oracle
-
-## 8️⃣ Backup i przywracanie
-    @11_backup/orabank_backup.sql
-
-
-Backup: Data Pump (EXPDP) lub RMAN
-
-Restore: Data Pump Import (IMPDP)
-
-
-🔹 Testowanie systemu
-
-Przykładowe operacje:
-
--- Dodanie klienta
-
-    INSERT INTO CLIENT (CLIENT_ID, NAME, SURNAME, PESEL, EMAIL) VALUES (1, 'Jan', 'Kowalski', '12345678901', 'jan.kowalski@example.com');
-
--- Dodanie konta
-
-    INSERT INTO ACCOUNT (ACCOUNT_ID, CLIENT_ID, ACCOUNT_NUMBER, BALANCE, CREATED_DATE, STATUS)
-    VALUES (1, 1, '1234567890123456', 1000, SYSDATE, 'AKTYWNE');
-
--- Wykonanie przelewu
-
-    BEGIN
-    ORABANK_ACCOUNT_PKG.MAKE_TRANSFER(1, 2, 200, 'Test przelewu');
-    END;
-    /
-
--- Pobranie historii transakcji
-
-    DECLARE
-    v_cursor SYS_REFCURSOR;
-    BEGIN
-    v_cursor := GET_ACCOUNT_TRANSACTIONS(1);
-    END;
-    /
+Plik `11_backup/orabank_backup.sql` zawiera szablony Data Pump bez danych logowania. Próbę odtworzenia wykonuj w odizolowanym schemacie testowym i sprawdzaj obiekty, klucze obce, pakiety oraz smoke test przed uznaniem backupu za poprawny.
